@@ -1,0 +1,15 @@
+﻿{
+  "name": "버스 시간 검색",
+  "short_name": "버스시간",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/static/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

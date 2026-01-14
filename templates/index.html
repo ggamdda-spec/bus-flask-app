@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#ffffff">
+<meta charset="UTF-8">
+<title>버스 시간 검색</title>
+
+<style>
+body {
+    font-family: "Malgun Gothic", Arial;
+    margin: 10px;
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type=text] {
+    width: 300px;
+    height: 26px;
+}
+
+button {
+    height: 30px;
+}
+
+.warning {
+    color: red;
+    margin: 8px 0;
+}
+
+.container {
+    display: flex;
+    gap: 10px;
+}
+
+.box {
+    flex: 1;
+    border: 1px solid #999;
+    padding: 5px;
+    height: 420px;
+    overflow-y: auto;
+}
+
+.box h3 {
+    margin: 5px 0;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 4px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+</style>
+</head>
+
+<body>
+
+<form method="post" class="top">
+    <label>정류장 이름 :</label>
+    <input type="text" name="station" value="{{ station }}">
+    <button type="submit">검색</button>
+    <button type="button" onclick="getLocation()">📍 내 위치</button>
+</form>
+
+<div class="warning">
+⚠ 도착시간은 실제 운행 상황에 따라 약 10분 정도 차이가 날 수 있습니다.
+</div>
+
+<div class="container">
+
+<!-- 상행 -->
+<div class="box">
+<h3>상행</h3>
+<table>
+<tr>
+<th>정류장</th><th>강진출발</th><th>도착</th><th>노선</th><th>코스</th>
+</tr>
+{% for r in up_results %}
+<tr>
+<td>{{ r[1] }}</td>
+<td>{{ r[2] }}</td>
+<td>{{ r[3] }}</td>
+<td>{{ r[4] }}</td>
+<td>{{ r[5] }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- 하행 -->
+<div class="box">
+<h3>하행</h3>
+<table>
+<tr>
+<th>정류장</th><th>강진출발</th><th>도착</th><th>노선</th><th>코스</th>
+</tr>
+{% for r in down_results %}
+<tr>
+<td>{{ r[1] }}</td>
+<td>{{ r[2] }}</td>
+<td>{{ r[3] }}</td>
+<td>{{ r[4] }}</td>
+<td>{{ r[5] }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</div>
+
+<script>
+function getLocation() {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/";
+
+        let lat = document.createElement("input");
+        lat.type = "hidden";
+        lat.name = "lat";
+        lat.value = pos.coords.latitude;
+
+        let lon = document.createElement("input");
+        lon.type = "hidden";
+        lon.name = "lon";
+        lon.value = pos.coords.longitude;
+
+        form.appendChild(lat);
+        form.appendChild(lon);
+        document.body.appendChild(form);
+        form.submit();
+    }, function() {
+        alert("위치 정보를 가져올 수 없습니다.");
+    });
+}
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/static/sw.js");
+}
+</script>
+
+
+</body>
+</html>
